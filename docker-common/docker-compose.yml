@@ -1,0 +1,42 @@
+version: '3'
+services:
+  traefik:
+    image: traefik:v2.0
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    networks:
+    - proxynet
+    ports:
+    - "80:80"
+    - "8080:8080"
+    - "443:443"
+    volumes:
+      - ./certs:/etc/certs
+      - ./tools/traefik/traefik.toml:/etc/traefik/traefik.toml
+      - ./tools/traefik/config.toml:/etc/traefik/traefik.config.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: secret
+    networks:
+    - mysqlnet
+    volumes:
+    - dbdata:/var/lib/mysql
+    ports:
+    - 3306:3306
+networks:
+  proxynet:
+    external: true
+    name: proxy-net
+  mysqlnet:
+    external: true
+    name: mysql-net
+volumes:
+  dbdata:
+    driver: local
