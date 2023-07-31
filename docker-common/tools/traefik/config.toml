@@ -1,0 +1,3 @@
+[[tls.certificates]]
+  certFile = "/etc/certs/yourkeyname-cert.pem"
+  keyFile = "/etc/certs/yourkeyname-key.pem"
